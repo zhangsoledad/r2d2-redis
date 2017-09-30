@@ -1,16 +1,16 @@
-extern crate redis;
 extern crate r2d2;
 extern crate r2d2_redis;
+extern crate redis;
 
 use std::sync::Arc;
 use std::sync::mpsc;
 use std::thread;
-
+use std::time::Duration;
 use r2d2_redis::RedisConnectionManager;
 
 #[test]
 fn test_basic() {
-    let manager = RedisConnectionManager::new("redis://localhost").unwrap();
+    let manager = RedisConnectionManager::new("redis://localhost", Duration::from_secs(1)).unwrap();
     let config = r2d2::Config::builder().pool_size(2).build();
     let pool = Arc::new(r2d2::Pool::new(config, manager).unwrap());
 
@@ -41,8 +41,11 @@ fn test_basic() {
 
 #[test]
 fn test_is_valid() {
-    let manager = RedisConnectionManager::new("redis://localhost").unwrap();
-    let config = r2d2::Config::builder().pool_size(1).test_on_check_out(true).build();
+    let manager = RedisConnectionManager::new("redis://localhost", Duration::from_secs(1)).unwrap();
+    let config = r2d2::Config::builder()
+        .pool_size(1)
+        .test_on_check_out(true)
+        .build();
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
     pool.get().unwrap();
