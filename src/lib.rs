@@ -57,9 +57,11 @@ impl error::Error for Error {
 /// use r2d2_redis::RedisConnectionManager;
 ///
 /// fn main() {
-///     let config = Default::default();
 ///     let manager = RedisConnectionManager::new("redis://localhost", Duration::from_secs(1)).unwrap();
-///     let pool = r2d2::Pool::new(config, manager).unwrap();
+///     let pool = r2d2::Pool::builder()
+///         .max_size(15)
+///         .build(manager)
+///         .unwrap();
 ///
 ///     let mut handles = vec![];
 ///

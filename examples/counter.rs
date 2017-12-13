@@ -2,7 +2,6 @@ extern crate r2d2;
 extern crate r2d2_redis;
 extern crate redis;
 
-use std::default::Default;
 use std::thread;
 use std::time::Duration;
 
@@ -11,9 +10,11 @@ use r2d2_redis::RedisConnectionManager;
 use redis::Commands;
 
 fn main() {
-    let config = Default::default();
     let manager = RedisConnectionManager::new("redis://localhost", Duration::from_secs(1)).unwrap();
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
     let mut handles = vec![];
 
